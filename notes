@@ -1,0 +1,26 @@
+warehouse-project/
+├── app/                # Tutaj ląduje kod Python (Backend + UI)
+│   ├── main.py         # Serwer FastAPI/Flask
+│   ├── database.py     # Połączenie z bazą
+│   └── templates/      # Pliki HTML (UI Klienta)
+├── db/                 # Skrypty inicjalizacyjne bazy danych (SQL)
+├── scripts/            # Twoje skrypty SHELL (.sh)
+│   ├── import_data.sh  # Skrypt dla Magazyniera
+│   └── run_tests.sh    # Skrypt do lokalnego odpalania testów
+├── tests/              # TESTY ROBOT FRAMEWORK
+│   ├── ui_tests.robot  # Testy przeglądarkowe Selenium
+│   └── resources.robot # Lokatory i zmienne
+├── k8s/                # MANIFESTY KUBERNETES (.yaml)
+│   ├── app-deploy.yaml
+│   └── db-deploy.yaml
+├── .github/            # CI/CD
+│   └── workflows/      # main.yml (GitHub Actions)
+├── Dockerfile          # Instrukcja budowania kontenera aplikacji
+└── requirements.txt    # Biblioteki Pythona
+
+
+Faza,Czas,Trudność
+1-2 (Python Core),1 tydzień,3/10
+3 (Shell & Data),1 tydzień,4/10
+4-5 (Docker & K8s),2-3 tygodnie,8/10
+6-7 (CI/CD & Robot),1-2 tygodnie,5/10
