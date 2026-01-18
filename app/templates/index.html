@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Warehouse System - Widok Klienta</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Katalog Produktów</h1>
+            <span class="badge bg-primary">Widok Klienta</span>
+        </div>
+
+        <div class="card shadow">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nazwa produktu</th>
+                            <th>Kategoria</th>
+                            <th>Cena</th>
+                            <th>Dostępność</th>
+                            <th>Akcja</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.price }} zł</td>
+                            <td>
+                                <span id="qty-{{ product.id }}" class="badge {% if product.quantity > 0 %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ product.quantity }} szt.
+                                </span>
+                            </td>
+                            <td>
+                                <button onclick="orderProduct({{ product.id }})"
+                                        id="btn-{{ product.id }}"
+                                        class="btn btn-sm btn-outline-primary"
+                                        {% if product.quantity <= 0 %}disabled{% endif %}>
+                                    Zamów
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function orderProduct(productId) {
+            const btn = document.getElementById(`btn-${productId}`);
+            const qtyBadge = document.getElementById(`qty-${productId}`);
+
+            try {
+                // Sending POST request to order the product
+                const response = await fetch(`/api/products/${productId}/order`, {
+                    method: 'POST'
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    // Live actualization of the quantity badge
+                    qtyBadge.innerText = `${data.remaining} szt.`;
+
+                    if (data.remaining <= 0) {
+                        qtyBadge.classList.replace('bg-success', 'bg-danger');
+                        qtyBadge.innerText = "Brak w magazynie";
+                        btn.disabled = true;
+                    }
+
+                    alert(`Sukces: ${data.message}`);
+                } else {
+                    const errorData = await response.json();
+                    alert(`Błąd: ${errorData.detail}`);
+                }
+            } catch (error) {
+                console.error('Błąd sieci:', error);
+                alert('Nie udało się połączyć z API');
+            }
+        }
+    </script>
+</body>
+</html>

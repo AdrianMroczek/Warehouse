@@ -1,3 +1,107 @@
+📦 Plan Projektu: Warehouse Management System (Python to DevOps)
+
+🔵 Faza 1: Backend API (Ukończono ✅)
+Technologie: Python, FastAPI, SQLModel, SQLite.
+
+Zakres:
+
+Konfiguracja bazy danych (Modele: Category, Product).
+
+Implementacja endpointów Admin (Seedowanie danych).
+
+Implementacja endpointów Klienta (Pobieranie produktów, logika zamówień).
+
+Implementacja endpointów Pracownika (Dodawanie towarów i kategorii).
+
+Walidacja danych i obsługa błędów (HTTP 404, 400).
+
+🔵 Faza 2: Interaktywny Interfejs UI (Ukończono ✅)
+Technologie: HTML5, Jinja2 Templates, Bootstrap 5, JavaScript (Fetch API).
+
+Zakres:
+
+Stworzenie dynamicznych szablonów Jinja2 wyświetlających dane z bazy.
+
+Integracja UI z API (Frontend rozmawia z Backendem).
+
+Obsługa zamówień asynchronicznych (AJAX/Fetch) – aktualizacja stanów bez przeładowania strony.
+
+🟡 Faza 3: Automatyzacja Shell (W trakcie 🚀)
+Technologie: Bash/Zsh, Linux Commands, curl.
+
+Cel: Nauka podstawowych komend Linux i automatyzacji zadań "Pracownika".
+
+Zakres:
+
+Tworzenie skryptów .sh do masowego dodawania produktów.
+
+Automatyzacja dostaw (czytanie z plików .csv lub .txt).
+
+Skrypty pomocnicze (backup bazy danych, restart serwera).
+
+⚪ Faza 4: Konteneryzacja (Docker)
+Technologie: Docker, Docker Compose.
+
+Cel: Izolacja aplikacji i przygotowanie do chmury.
+
+Zakres:
+
+Napisanie optymalnego Dockerfile.
+
+Orkiestracja za pomocą docker-compose (osobny kontener dla apki, osobny dla bazy danych w przyszłości).
+
+Zarządzanie zmiennymi środowiskowymi.
+
+⚪ Faza 5: Orkiestracja (Kubernetes)
+Technologie: Kubernetes (Minikube/Kind), YAML.
+
+Cel: Nauka zarządzania systemem w klastrze.
+
+Zakres:
+
+Tworzenie manifestów Deployment i Service.
+
+Zarządzanie stanem (Persistent Volumes dla bazy danych).
+
+Skalowanie aplikacji (uruchamianie wielu instancji UI).
+
+⚪ Faza 6: CI/CD (GitHub Actions)
+Technologie: GitHub Actions, YAML.
+
+Cel: Automatyzacja procesu budowania i testowania.
+
+Zakres:
+
+Pipeline sprawdzający jakość kodu (Linter).
+
+Automatyczne budowanie obrazów Docker po każdym push.
+
+Automatyczne uruchamianie testów.
+
+⚪ Faza 7: Testy E2E (Robot Framework)
+Technologie: Robot Framework, Selenium Library / Playwright.
+
+Cel: Weryfikacja całego systemu "oczami użytkownika".
+
+Zakres:
+
+Automatyzacja scenariuszy: "Klient zamawia ostatnią sztukę -> sprawdzenie czy przycisk się wyłączył".
+
+Testowanie integracji: "Pracownik dodaje produkt skryptem Shell -> sprawdzenie czy produkt pojawił się w UI".
+
+Generowanie raportów z testów w CI/CD.
+
+⚪ Faza Dodatkowa: Portowanie na inny język (C# / Go)
+Technologie: ASP.NET Core lub Go (Golang).
+
+Cel: Nauka nowego języka poprzez przepisanie istniejącej logiki.
+
+Zakres:
+
+Przepisanie Backend API przy zachowaniu tej samej struktury endpointów.
+
+Weryfikacja nowej wersji za pomocą gotowych testów z Fazy 7.
+
 warehouse-project/
 ├── app/                # Tutaj ląduje kod Python (Backend + UI)
 │   ├── main.py         # Serwer FastAPI/Flask

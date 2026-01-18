@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Request
 from sqlmodel import Session, select
 from contextlib import asynccontextmanager
 from app.database import engine, Category, Product, create_db_and_tables
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -10,10 +12,11 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(
-    title="Product Catalog API",
+    title="Warehouse Management API",
     lifespan=lifespan,
     servers=[{"url": "http://127.0.0.1:8000/", "description": "Local server"}]
 )
+templates = Jinja2Templates(directory="app/templates")
 
 def get_session():
     """Open and close session for each request"""
@@ -93,3 +96,13 @@ def add_category(category_in: Category, session: Session = Depends(get_session))
     session.commit()
     session.refresh(category_in)
     return category_in
+
+#--- HTML Endpoints ---
+@app.get("/", response_class=HTMLResponse, tags=["UI"])
+def read_root(request: Request, session: Session = Depends(get_session)):
+    """Render the main page with product listings."""
+    products = session.exec(select(Product)).all()
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request, "products": products}
+    )
