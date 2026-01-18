@@ -14,12 +14,13 @@ app = FastAPI(
     lifespan=lifespan,
     servers=[{"url": "http://127.0.0.1:8000/", "description": "Local server"}]
 )
-"""Open and close session for each request"""
+
 def get_session():
+    """Open and close session for each request"""
     with Session(engine) as session:
         yield session
 
-
+# --- Admin Endpoints ---
 
 @app.post("/api/seed", tags=["Admin"])
 def seed_database(session: Session = Depends(get_session)):
@@ -54,38 +55,41 @@ def get_categories(session: Session = Depends(get_session)):
     """Retrieve all categories from db."""
     return session.exec(select(Category)).all()
 
+
 @app.post("/api/products/{product_id}/order", tags=["Client"])
-def order_product(product_id: int, quantity: int, session: Session = Depends(get_session)):
-    """Order a product by reducing its quantity."""
+def order_product(product_id: int, session: Session = Depends(get_session)):
+    """Order a product by its ID."""
     product = session.get(Product, product_id)
-    if not product or product.quantity <= 0:
-        raise HTTPException(status_code=404, detail="Product unavailable")
-    product.quantity -= quantity
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    if product.quantity <= 0:
+        raise HTTPException(status_code=400, detail="Out of stock")
+
+    product.quantity -= 1
     session.add(product)
     session.commit()
     session.refresh(product)
-    return {"message": f"Ordered {quantity} of {product.name}", "remaining_quantity": product.quantity}
+    return {"message": f"Ordered {product.name}", "remaining": product.quantity}
 
 # --- Employee Endpoints ---
 
-@app.post("/api/products", tags=["Employee"])
-def add_product(product: Product, session: Session = Depends(get_session)):
-    """Add a new product to the database."""
-    category = session.get(Category, product.category_id)
+@app.post("/api/employee/products", tags=["Employee"])
+def add_product(product_in: Product, session: Session = Depends(get_session)):
+    """Add new product to the catalog."""
+    category = session.get(Category, product_in.category_id)
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
-    session.add(product)
-    session.commit()
-    session.refresh(product)
-    return product
 
-@app.post("/api/categories", tags=["Employee"])
-def add_category(category: Category, session: Session = Depends(get_session)):
-    """Add a new category to the database."""
-    existing_cat = session.exec(select(Category).where(Category.name == category.name)).first()
-    if existing_cat:
-        raise HTTPException(status_code=400, detail="Category already exists")
-    session.add(category)
+    session.add(product_in)
     session.commit()
-    session.refresh(category)
-    return category
+    session.refresh(product_in)
+    return product_in
+
+
+@app.post("/api/employee/categories", tags=["Employee"])
+def add_category(category_in: Category, session: Session = Depends(get_session)):
+    """Add new category to the catalog."""
+    session.add(category_in)
+    session.commit()
+    session.refresh(category_in)
+    return category_in
