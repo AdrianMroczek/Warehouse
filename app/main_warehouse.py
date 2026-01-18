@@ -4,6 +4,13 @@ from contextlib import asynccontextmanager
 from app.database import engine, Category, Product, create_db_and_tables
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
+
+class ProductCreate(BaseModel):
+    name: str
+    price: float
+    quantity: int
+    category_name: str
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -77,16 +84,27 @@ def order_product(product_id: int, session: Session = Depends(get_session)):
 # --- Employee Endpoints ---
 
 @app.post("/api/employee/products", tags=["Employee"])
-def add_product(product_in: Product, session: Session = Depends(get_session)):
+def add_product(product_in: ProductCreate, session: Session = Depends(get_session)):
     """Add new product to the catalog."""
-    category = session.get(Category, product_in.category_id)
+    statement = select(Category).where(Category.name == product_in.category_name)
+    category = session.exec(statement).first()
     if not category:
-        raise HTTPException(status_code=404, detail="Category not found")
+        category = Category(name=product_in.category_name)
+        session.add(category)
+        session.commit()
+        session.refresh(category)
 
-    session.add(product_in)
+    db_product = Product(
+        name=product_in.name,
+        price=product_in.price,
+        quantity=product_in.quantity,
+        category_id=category.id
+
+    session.add(db_product)
     session.commit()
-    session.refresh(product_in)
-    return product_in
+    session.refresh(db_product)
+
+    return db_product
 
 
 @app.post("/api/employee/categories", tags=["Employee"])
