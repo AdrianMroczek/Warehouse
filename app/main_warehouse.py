@@ -94,11 +94,22 @@ def add_product(product_in: ProductCreate, session: Session = Depends(get_sessio
         session.commit()
         session.refresh(category)
 
-    db_product = Product(
+    statement_prod = select(Product).where(Product.name == product_in.name)
+    existing_product = session.exec(statement_prod).first()
+
+    if existing_product:
+        existing_product.quantity += product_in.quantity
+        existing_product.price = product_in.price
+        session.add(existing_product)
+        db_product = existing_product
+    else:
+
+        db_product = Product(
         name=product_in.name,
         price=product_in.price,
         quantity=product_in.quantity,
         category_id=category.id
+    )
 
     session.add(db_product)
     session.commit()

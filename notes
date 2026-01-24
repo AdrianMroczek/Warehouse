@@ -128,3 +128,8 @@ Faza,Czas,Trudność
 3 (Shell & Data),1 tydzień,4/10
 4-5 (Docker & K8s),2-3 tygodnie,8/10
 6-7 (CI/CD & Robot),1-2 tygodnie,5/10
+
+### Komendy ###
+uvicorn app.main_warehouse:app --reload
+
+taskkill /F /IM python.exe
