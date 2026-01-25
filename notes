@@ -39,7 +39,7 @@ Automatyzacja dostaw (czytanie z plików .csv lub .txt).
 
 Skrypty pomocnicze (backup bazy danych, restart serwera).
 
-⚪ Faza 4: Konteneryzacja (Docker)(W trakcie 🚀)
+⚪ Faza 4: Konteneryzacja (Docker)(Ukończono ✅)
 Technologie: Docker, Docker Compose.
 
 Cel: Izolacja aplikacji i przygotowanie do chmury.
@@ -52,7 +52,7 @@ Orkiestracja za pomocą docker-compose (osobny kontener dla apki, osobny dla baz
 
 Zarządzanie zmiennymi środowiskowymi.
 
-⚪ Faza 5: Orkiestracja (Kubernetes)
+⚪ Faza 5: Orkiestracja (Kubernetes)(W trakcie 🚀)
 Technologie: Kubernetes (Minikube/Kind), YAML.
 
 Cel: Nauka zarządzania systemem w klastrze.
