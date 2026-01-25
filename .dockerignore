@@ -1,0 +1,7 @@
+__pycache__/
+*.db
+*.log
+*log.txt
+.venv/
+notes
+.gitignore

@@ -26,7 +26,7 @@ Integracja UI z API (Frontend rozmawia z Backendem).
 
 Obsługa zamówień asynchronicznych (AJAX/Fetch) – aktualizacja stanów bez przeładowania strony.
 
-🟡 Faza 3: Automatyzacja Shell (W trakcie 🚀)
+🟡 Faza 3: Automatyzacja Shell (Ukończono ✅)
 Technologie: Bash/Zsh, Linux Commands, curl.
 
 Cel: Nauka podstawowych komend Linux i automatyzacji zadań "Pracownika".
@@ -39,7 +39,7 @@ Automatyzacja dostaw (czytanie z plików .csv lub .txt).
 
 Skrypty pomocnicze (backup bazy danych, restart serwera).
 
-⚪ Faza 4: Konteneryzacja (Docker)
+⚪ Faza 4: Konteneryzacja (Docker)(W trakcie 🚀)
 Technologie: Docker, Docker Compose.
 
 Cel: Izolacja aplikacji i przygotowanie do chmury.
