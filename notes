@@ -133,3 +133,13 @@ Faza,Czas,Trudność
 uvicorn app.main_warehouse:app --reload
 
 taskkill /F /IM python.exe
+
+docker build -t warehouse-app .
+
+docker run -d -p 8000:8000 warehouse-app
+
+kubectl apply -f k8s/db-deploy.yaml
+
+kubectl apply -f k8s/app-deploy.yaml
+
+kubectl get pods
