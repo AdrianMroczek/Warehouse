@@ -1,0 +1,33 @@
+name: Warehouse Deployment
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - id: "auth"
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{ secrets.GCP_SA_KEY }}"
+      - name: Configure Docker for GCP
+        run: gcloud auth configure-docker europe-central2-docker.pkg.dev
+      - name: Build and Push Image
+        run: |
+          docker build -t europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/warehouse-repo/app:${{ github.sha }} .
+          docker push europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/warehouse-repo/app:${{ github.sha }}
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: 'warehouse-cluster'
+          location: 'europe-central2'
+      - name: Deploy to Kubernetes
+        run: |
+          sed -i "s|image: warehouse-app:latest|image: europe-central2-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/warehouse-repo/app:${{ github.sha }}|g" k8s/app-deploy.yaml
+            
+          kubectl apply -f k8s/db-deploy.yaml
+          kubectl apply -f k8s/app-deploy.yaml
