@@ -31,7 +31,7 @@ kind: Service
 metadata:
   name: warehouse-service
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: warehouse
   ports:
