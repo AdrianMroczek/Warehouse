@@ -143,3 +143,7 @@ kubectl apply -f k8s/db-deploy.yaml
 kubectl apply -f k8s/app-deploy.yaml
 
 kubectl get pods
+
+kubectl scale deployment warehouse-app --replicas=0
+
+kubectl delete service warehouse-service
