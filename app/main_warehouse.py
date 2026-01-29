@@ -55,27 +55,18 @@ def seed_database(session: Session = Depends(get_session)):
 
 # --- Client Endpoints ---
 
-@app.get("/api/products", tags=["Client"])
-def get_products(session: Session = Depends(get_session)):
-    """Retrieve all products with from db."""
-    return session.exec(select(Product)).all()
-
-@app.get("/api/categories", tags=["Client"])
-def get_categories(session: Session = Depends(get_session)):
-    """Retrieve all categories from db."""
-    return session.exec(select(Category)).all()
-
-
 @app.post("/api/products/{product_id}/order", tags=["Client"])
-def order_product(product_id: int, session: Session = Depends(get_session)):
+def order_product(product_id: int, order_quantity: int, session: Session = Depends(get_session)):
     """Order a product by its ID."""
     product = session.get(Product, product_id)
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     if product.quantity <= 0:
         raise HTTPException(status_code=400, detail="Out of stock")
+    if order_quantity > product.quantity:
+        raise HTTPException(status_code=400, detail="Insufficient stock available")
 
-    product.quantity -= 1
+    product.quantity -= order_quantity
     session.add(product)
     session.commit()
     session.refresh(product)
@@ -117,7 +108,6 @@ def add_product(product_in: ProductCreate, session: Session = Depends(get_sessio
 
     return db_product
 
-
 @app.post("/api/employee/categories", tags=["Employee"])
 def add_category(category_in: Category, session: Session = Depends(get_session)):
     """Add new category to the catalog."""
@@ -125,6 +115,17 @@ def add_category(category_in: Category, session: Session = Depends(get_session))
     session.commit()
     session.refresh(category_in)
     return category_in
+
+@app.get("/api/products", tags=["Employee"])
+def get_products(session: Session = Depends(get_session)):
+    """Retrieve all products with from db."""
+    return session.exec(select(Product)).all()
+
+@app.get("/api/categories", tags=["Employee"])
+def get_categories(session: Session = Depends(get_session)):
+    """Retrieve all categories from db."""
+    return session.exec(select(Category)).all()
+
 
 #--- HTML Endpoints ---
 @app.get("/", response_class=HTMLResponse, tags=["UI"])

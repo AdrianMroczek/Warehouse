@@ -1,6 +1,11 @@
 #!/bin/bash
 
-# This script automates the process of restocking inventory items.
+# This script automates the process of managing inventory item quantities.
+# It reads item details from a CSV file and update inventory.
+# CSV structure: name,price,quantity,category_name with first line as header.
+# Non existent items will be created, existing items will have their quantities and prices updated.
+# To lower the quantity, use a negative number.
+# Usage: ./restock.sh [csv_file] [api_url]
 
 #Log file creation and date entry
 LOG_FILE="restock_log.txt"
@@ -17,7 +22,7 @@ URL=${2:-"http://127.0.0.1:8000/api/employee/products"}
 echo $URL
 echo $CSV
 
-while IFS=',' read -r NAME PRICE QUANTITY CATEGORY || [ -n "$NAME" ]
+tail -n +2 "$CSV" | while IFS=',' read -r NAME PRICE QUANTITY CATEGORY || [ -n "$NAME" ]
 do
   NAME=$(echo "$NAME" | tr -d '\r'| sed '1s/^\xEF\xBB\xBF//')
   PRICE=$(echo "$PRICE" | tr -d '\r')

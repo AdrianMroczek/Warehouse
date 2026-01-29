@@ -36,12 +36,18 @@
                                 </span>
                             </td>
                             <td>
-                                <button onclick="orderProduct({{ product.id }})"
+                                <div class="input-group input-group-sm" style="max-width: 130px;">
+                                    <button onclick="orderProduct({{ product.id }})"
                                         id="btn-{{ product.id }}"
                                         class="btn btn-sm btn-outline-primary"
                                         {% if product.quantity <= 0 %}disabled{% endif %}>
                                     Zamów
-                                </button>
+                                    </button>
+                                    <input type="number"
+                                           oninput="if(this.value > {{ product.quantity }}) this.value = {{ product.quantity }};"
+                                           id="order-qty-{{ product.id }}" min="1" max="{{ product.quantity }}" value="1"
+                                           class="form-control form-control-sm">
+                                </div>
                             </td>
                         </tr>
                         {% endfor %}
@@ -55,10 +61,16 @@
         async function orderProduct(productId) {
             const btn = document.getElementById(`btn-${productId}`);
             const qtyBadge = document.getElementById(`qty-${productId}`);
+            const orderQtyInput = document.getElementById(`order-qty-${productId}`);
+            const quantity = parseInt(orderQtyInput.value, 10);
+            if (isNaN(quantity) || quantity <= 0) {
+                alert('Proszę wprowadzić prawidłową ilość do zamówienia.');
+                return;
+            }
 
             try {
                 // Sending POST request to order the product
-                const response = await fetch(`/api/products/${productId}/order`, {
+                const response = await fetch(`/api/products/${productId}/order?order_quantity=${quantity}`, {
                     method: 'POST'
                 });
 
