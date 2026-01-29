@@ -147,3 +147,5 @@ kubectl get pods
 kubectl scale deployment warehouse-app --replicas=0
 
 kubectl delete service warehouse-service
+
+kubectl describe pod [NAZWA_PODA]

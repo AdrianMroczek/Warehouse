@@ -24,3 +24,5 @@ fi
 
 echo "------------------------------"
 echo "Environment reset complete."
+
+read -p "Press [Enter] to continue..."
