@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Depends, HTTPException, Request
 from sqlmodel import Session, select
 from contextlib import asynccontextmanager
-from app.database import engine, Category, Product, create_db_and_tables
+from app.database import engine, Category, Product, create_db_and_tables, CategoryRead, ProductRead
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
+from typing import List
 
 class ProductCreate(BaseModel):
     name: str
@@ -43,6 +44,10 @@ def seed_database(session: Session = Depends(get_session)):
     cat_myszy = Category(name="Myszy")
     session.add_all([cat_monitors, cat_laptopy, cat_myszy])
     session.commit()
+
+    session.refresh(cat_monitors)
+    session.refresh(cat_laptopy)
+    session.refresh(cat_myszy)
 
     p1 = Product(name="Lenovo Legion 27Q-10", price=799.99, quantity=20, category_id=cat_monitors.id)
     p2 = Product(name="Samsung Odyssey G5", price=1799.99, quantity=15, category_id=cat_monitors.id)
@@ -116,16 +121,41 @@ def add_category(category_in: Category, session: Session = Depends(get_session))
     session.refresh(category_in)
     return category_in
 
-@app.get("/api/products", tags=["Employee"])
-def get_products(session: Session = Depends(get_session)):
-    """Retrieve all products with from db."""
-    return session.exec(select(Product)).all()
 
-@app.get("/api/categories", tags=["Employee"])
+@app.get("/api/products", response_model=List[ProductRead], tags=["Employee"])
+def get_products(
+        session: Session = Depends(get_session),
+        category_id: int = None,
+        name: str = None,
+        max_price: float = None,
+        status: str = None
+):
+    statement = select(Product)
+
+    # Category filter
+    if category_id:
+        statement = statement.where(Product.category_id == category_id)
+
+    # Name filter
+    if name:
+        statement = statement.where(Product.name.contains(name))
+
+    # Price filter
+    if max_price:
+        statement = statement.where(Product.price <= max_price)
+
+    # Availability filter
+    if status == "in_stock":
+        statement = statement.where(Product.quantity > 0)
+    elif status == "out_of_stock":
+        statement = statement.where(Product.quantity <= 0)
+
+    return session.exec(statement).all()
+
+@app.get("/api/categories", response_model=List[CategoryRead], tags=["Employee"])
 def get_categories(session: Session = Depends(get_session)):
     """Retrieve all categories from db."""
     return session.exec(select(Category)).all()
-
 
 #--- HTML Endpoints ---
 @app.get("/", response_class=HTMLResponse, tags=["UI"])

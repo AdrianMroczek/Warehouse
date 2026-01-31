@@ -22,6 +22,18 @@ class Product(SQLModel, table=True):
 
     category: Optional[Category] = Relationship(back_populates="products")
 
+class CategoryRead(SQLModel, table=False):
+    id: int
+    name: str
+
+class ProductRead(SQLModel):
+    id: int
+    name: str
+    price: float
+    quantity: int
+    category_id: int
+    category: Optional[CategoryRead] = None
+
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
