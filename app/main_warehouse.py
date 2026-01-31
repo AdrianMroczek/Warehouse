@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from typing import List
+from fastapi.staticfiles import StaticFiles
 
 class ProductCreate(BaseModel):
     name: str
@@ -24,6 +25,8 @@ app = FastAPI(
     lifespan=lifespan,
     servers=[{"url": "http://127.0.0.1:8000/", "description": "Local server"}]
 )
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
+
 templates = Jinja2Templates(directory="app/templates")
 
 def get_session():
