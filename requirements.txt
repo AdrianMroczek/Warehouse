@@ -1,15 +1,20 @@
-#Framework i Serwer
+#Framework and server
 fastapi==0.128.0
 uvicorn==0.40.0
 
-# Baza danych i ORM
+# Database
 sqlalchemy==2.0.45
 sqlmodel==0.0.31
 
-# UI i Szablony
+# UI
 jinja2==3.1.6
 python-multipart==0.0.21
 
-# Narzędzia pomocnicze
+# Tools
 pydantic==2.12.5
 pydantic-settings==2.12.0
+
+# Testing
+playwright==1.58.0
+pytest-playwright==0.7.2
+pytest-html==4.2.0
