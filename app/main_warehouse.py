@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, Request
-from sqlmodel import Session, select
+from sqlmodel import Session, select, delete
 from contextlib import asynccontextmanager
 from app.database import engine, Category, Product, create_db_and_tables, CategoryRead, ProductRead
 from fastapi.responses import HTMLResponse
@@ -60,6 +60,14 @@ def seed_database(session: Session = Depends(get_session)):
     session.commit()
 
     return {"message": "Database seeding successful"}
+
+@app.delete("/api/reset", tags=["Admin"])
+def reset_database(session: Session = Depends(get_session)):
+    """Deletes all data from the database."""
+    session.exec(delete(Product))
+    session.exec(delete(Category))
+    session.commit()
+    return {"message": "Database reset successful"}
 
 # --- Client Endpoints ---
 

@@ -180,18 +180,6 @@ Cleans up the environment:
 - Clears log files
 - Useful for development/testing
 
-## 📊 Project Roadmap
-
-| Phase | Status | Description |
-|-------|--------|-------------|
-| 1 | ✅ Complete | Backend API with FastAPI |
-| 2 | ✅ Complete | Interactive Web UI with Jinja2 & Bootstrap |
-| 3 | ✅ Complete | Shell Automation Scripts |
-| 4 | ✅ Complete | Docker Containerization |
-| 5 | 🚀 In Progress | Kubernetes Orchestration |
-| 6 | ⏳ Planned | CI/CD with GitHub Actions |
-| 7 | ⏳ Planned | E2E Testing with Playwright |
-
 ## 📝 Development
 
 The project serves as a comprehensive learning resource, progressing from:
@@ -211,5 +199,3 @@ This project is provided as-is for educational purposes.
 Adrian Mroczek
 
 ---
-
-For more details about specific phases, check the `notes` file in the repository.
