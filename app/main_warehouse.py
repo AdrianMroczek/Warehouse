@@ -23,7 +23,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Warehouse Management API",
     lifespan=lifespan,
-    servers=[{"url": "http://127.0.0.1:8000/", "description": "Local server"}]
 )
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
