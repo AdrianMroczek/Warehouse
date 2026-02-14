@@ -1,0 +1,36 @@
+pipeline {
+  agent any
+  environment {
+    IMAGE_NAME = "warehouse-app"
+    CONTAINER_NAME = "warehouse-app-container"
+  }
+  stages {
+    stage ('Docker Build'){
+      steps {
+        bat "docker build -t ${IMAGE_NAME} ."
+      }
+    }
+  stage ('Docker Run'){
+      steps {
+        bat "docker run -d -p 8000:8000 --name ${CONTAINER_NAME} ${IMAGE_NAME}"
+        sleep time: 10, unit: 'SECONDS'
+      }
+    }
+  stage ('K8s Deploy'){
+    steps {
+      bat "kubectl apply -f k8s/db-deploy.yaml"
+      bat "kubectl apply -f k8s/app-deploy.yaml"
+      sleep time: 10, unit: 'SECONDS'
+    }
+  }
+  stage ('Sanity Seeding Test'){
+    steps {
+      bat "pytest tests/sanity_tests/test_seeding.py"
+    }
+  }
+  stage ('Sanity UI Test'){
+    steps {
+      bat "pytest tests/sanity_tests/test_UI_sanity.py"
+    }
+  }
+}
