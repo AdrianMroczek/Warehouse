@@ -18,12 +18,12 @@ pipeline {
   }
   stage ('Sanity Seeding Test'){
     steps {
-      bat "pytest tests/sanity_tests/test_seeding.py"
+      bat "docker exec ${CONTAINER_NAME} pytest tests/sanity_tests/test_seeding.py"
     }
   }
   stage ('Sanity UI Test'){
     steps {
-      bat "pytest tests/sanity_tests/test_UI_sanity.py"
+      bat "docker exec ${CONTAINER_NAME} pytest tests/sanity_tests/test_UI_sanity.py"
     }
   }
 }
