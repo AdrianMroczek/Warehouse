@@ -25,13 +25,28 @@ pipeline {
   }
   stage ('Sanity Seeding Test'){
     steps {
-      bat "python -m pytest tests/sanity_tests/test_seeding.py"
+      bat "python -m pytest tests/sanity_tests/test_seeding.py --html=report_seeding.html --self-contained-html"
     }
   }
   stage ('Sanity UI Test'){
     steps {
-      bat "python -m pytest tests/sanity_tests/test_UI_sanity.py"
+      bat "python -m pytest tests/sanity_tests/test_UI_sanity.py --html=report_seeding.html --self-contained-html"
     }
   }
 }
+post {
+      always {
+        publishHTML(target: [
+          allowMissing: false,
+          alwaysLinkToLastBuild: true,
+          keepAll: true,
+          reportDir: '.',
+          reportFiles: 'report_seeding.html',
+          reportName: 'Sanity Test Report'
+        ])
+      }
+      always {
+        bat "curl -X DELETE http://127.0.0.1:8000/api/reset"
+      }
+    }
 }

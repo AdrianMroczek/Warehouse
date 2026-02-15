@@ -1,0 +1,14 @@
+pipeline {
+  agent any
+  environment {
+    IMAGE_NAME = "warehouse-app"
+    CONTAINER_NAME = "warehouse-app-container"
+  }
+  stages {
+    stage('Prepare DB') {
+      steps {
+        bat "./scripts/restock.sh"
+      }
+    }
+  }
+}
