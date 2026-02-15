@@ -12,18 +12,20 @@ pipeline {
     }
   stage ('Docker Run'){
     steps {
+      bat "docker stop ${CONTAINER_NAME} || true"
+      bat "docker rm ${CONTAINER_NAME} || true"
       bat "docker run -d -p 8000:8000 --name ${CONTAINER_NAME} ${IMAGE_NAME}"
       sleep time: 10, unit: 'SECONDS'
     }
   }
   stage ('Sanity Seeding Test'){
     steps {
-      bat "docker exec ${CONTAINER_NAME} pytest tests/sanity_tests/test_seeding.py"
+      bat "python -m pytest tests/sanity_tests/test_seeding.py"
     }
   }
   stage ('Sanity UI Test'){
     steps {
-      bat "docker exec ${CONTAINER_NAME} pytest tests/sanity_tests/test_UI_sanity.py"
+      bat "python -m pytest tests/sanity_tests/test_UI_sanity.py"
     }
   }
 }
