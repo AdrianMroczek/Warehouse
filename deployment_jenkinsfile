@@ -1,0 +1,50 @@
+pipeline {
+  agent any
+  environment {
+    IMAGE_NAME = "warehouse-app"
+    CONTAINER_NAME = "warehouse-app-container"
+  }
+  stages {
+    stage ('Docker Build'){
+      steps {
+        bat "docker build -t ${IMAGE_NAME} ."
+      }
+    }
+  stage ('Docker Run'){
+    steps {
+      bat "docker run -d -p 8000:8000 --name ${CONTAINER_NAME} ${IMAGE_NAME}"
+      sleep time: 10, unit: 'SECONDS'
+    }
+  }
+  stage('Prepare Host') {
+    steps {
+      bat "python -m pip install --upgrade pip"
+      bat "python -m pip install -r requirements.txt"
+      bat "python -m playwright install"
+    }
+  }
+  stage ('Sanity Seeding Test'){
+    steps {
+      bat "python -m pytest tests/sanity_tests/test_seeding.py --html=report_seeding.html --self-contained-html"
+    }
+  }
+  stage ('Sanity UI Test'){
+    steps {
+      bat "python -m pytest tests/sanity_tests/test_UI_sanity.py --html=report_UI.html --self-contained-html"
+    }
+  }
+}
+post {
+      always {
+        publishHTML(target: [
+          allowMissing: false,
+          alwaysLinkToLastBuild: true,
+          keepAll: true,
+          reportDir: '.',
+          reportFiles: 'report_seeding.html',
+          reportName: 'Sanity Test Report'
+        ])
+        bat "curl -X DELETE http://127.0.0.1:8000/api/reset"
+      }
+    }
+}

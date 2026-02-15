@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Depends, HTTPException, Request
-from sqlmodel import Session, select
+from sqlmodel import Session, select, delete
 from contextlib import asynccontextmanager
 from app.database import engine, Category, Product, create_db_and_tables, CategoryRead, ProductRead
 from fastapi.responses import HTMLResponse
@@ -23,7 +23,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Warehouse Management API",
     lifespan=lifespan,
-    servers=[{"url": "http://127.0.0.1:8000/", "description": "Local server"}]
 )
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
@@ -60,6 +59,14 @@ def seed_database(session: Session = Depends(get_session)):
     session.commit()
 
     return {"message": "Database seeding successful"}
+
+@app.delete("/api/reset", tags=["Admin"])
+def reset_database(session: Session = Depends(get_session)):
+    """Deletes all data from the database."""
+    session.exec(delete(Product))
+    session.exec(delete(Category))
+    session.commit()
+    return {"message": "Database reset successful"}
 
 # --- Client Endpoints ---
 

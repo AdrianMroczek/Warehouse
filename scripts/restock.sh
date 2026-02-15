@@ -22,12 +22,16 @@ URL=${2:-"http://127.0.0.1:8000/api/employee/products"}
 echo $URL
 echo $CSV
 
-tail -n +2 "$CSV" | while IFS=',' read -r NAME PRICE QUANTITY CATEGORY
+grep -v '^$' "$CSV" | tail -n +2 | while IFS=',' read -r NAME PRICE QUANTITY CATEGORY || [ -n "$NAME" ]
 do
   NAME=$(echo "$NAME" | tr -d '\r'| sed '1s/^\xEF\xBB\xBF//')
   PRICE=$(echo "$PRICE" | tr -d '\r')
   QUANTITY=$(echo "$QUANTITY" | tr -d '\r')
   CATEGORY=$(echo "$CATEGORY" | tr -d '\r')
+
+  if [ "$NAME" == "Name" ] || [ -z "$NAME" ]; then
+    continue
+  fi
 
 
   echo "Restocking item: $NAME, Price: $PRICE, Quantity: $QUANTITY, Category: $CATEGORY"

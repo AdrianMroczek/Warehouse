@@ -1,0 +1,27 @@
+pipeline {
+  agent any
+  environment {
+    IMAGE_NAME = "warehouse-app"
+    CONTAINER_NAME = "warehouse-app-container"
+  }
+  stages {
+    stage('Prepare DB') {
+      steps {
+        dir('scripts') {
+          bat '"C:\\Program Files\\Git\\bin\\bash.exe" restock.sh'
+        }
+      }
+    }
+    stage('Run Test') {
+      steps {
+        bat "python -m pytest tests/final_tests/test_functions_and_values.py --html=report_functions_and_values.html --self-contained-html"
+      }
+    }
+  }
+post {
+      always {
+        archiveArtifacts artifacts: 'test-results/**', allowEmptyArchive: true
+        bat "curl -X DELETE http://127.0.0.1:8000/api/reset"
+      }
+    }
+}
