@@ -7,8 +7,9 @@ pipeline {
   stages {
     stage('Prepare DB') {
       steps {
-        bat "cd scripts"
-        bat '"C:\\Program Files\\Git\\bin\\bash.exe" restock.sh'
+        dir('scripts') {
+          bat '"C:\\Program Files\\Git\\bin\\bash.exe" restock.sh'
+        }
       }
     }
   }
