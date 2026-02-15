@@ -16,6 +16,13 @@ pipeline {
       sleep time: 10, unit: 'SECONDS'
     }
   }
+  stage('Prepare Host') {
+    steps {
+      bat "python -m pip install --upgrade pip"
+      bat "python -m pip install -r requirements.txt"
+      bat "python -m playwright install"
+    }
+  }
   stage ('Sanity Seeding Test'){
     steps {
       bat "python -m pytest tests/sanity_tests/test_seeding.py"
