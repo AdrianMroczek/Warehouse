@@ -30,7 +30,7 @@ pipeline {
   }
   stage ('Sanity UI Test'){
     steps {
-      bat "python -m pytest tests/sanity_tests/test_UI_sanity.py --html=report_seeding.html --self-contained-html"
+      bat "python -m pytest tests/sanity_tests/test_UI_sanity.py --html=report_UI.html --self-contained-html"
     }
   }
 }
