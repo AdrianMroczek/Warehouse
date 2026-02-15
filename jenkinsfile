@@ -12,8 +12,6 @@ pipeline {
     }
   stage ('Docker Run'){
     steps {
-      bat "docker stop ${CONTAINER_NAME} || true"
-      bat "docker rm ${CONTAINER_NAME} || true"
       bat "docker run -d -p 8000:8000 --name ${CONTAINER_NAME} ${IMAGE_NAME}"
       sleep time: 10, unit: 'SECONDS'
     }
